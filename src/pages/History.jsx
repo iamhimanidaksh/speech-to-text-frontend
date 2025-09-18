@@ -37,16 +37,14 @@ export default function History() {
     async function clearAllHistory() {
         if (!window.confirm("This will delete ALL transcripts. Continue?")) return;
         try {
-            // Loop through each transcript and delete individually
-            for (const item of history) {
-                await axios.delete(`https://speech-to-text-backend-hejt.onrender.com/api/transcriptions/${item._id}`);
-            }
-            setHistory([]); // clear state after deletion
+            await axios.delete("https://speech-to-text-backend-hejt.onrender.com/api/transcriptions");
+            setHistory([]);
             alert("All transcripts cleared!");
         } catch {
             alert("Failed to clear history");
         }
     }
+
 
     // ================= Download All Transcripts =================
     function downloadAllHistory() {
