@@ -39,7 +39,7 @@ export default function History() {
         try {
             // Loop through each transcript and delete individually
             for (const item of history) {
-                await axios.delete(`https://speech-to-text-backend-hejt.onrender.com/${item._id}`);
+                await axios.delete(`https://speech-to-text-backend-hejt.onrender.com/api/transcriptions/${item._id}`);
             }
             setHistory([]); // clear state after deletion
             alert("All transcripts cleared!");
