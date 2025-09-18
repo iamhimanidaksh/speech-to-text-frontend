@@ -15,7 +15,7 @@ export default function History() {
     // ================= Fetch History from Backend =================
     async function fetchHistory() {
         try {
-            const res = await axios.get("http://localhost:4000/api/transcriptions");
+            const res = await axios.get("https://speech-to-text-backend-hejt.onrender.com/api/transcriptions");
             setHistory(res.data); // store fetched transcriptions
         } catch {
             alert("Failed to fetch history");
@@ -26,7 +26,7 @@ export default function History() {
     async function deleteTranscript(id) {
         if (!window.confirm("Are you sure you want to delete this transcript?")) return;
         try {
-            await axios.delete(`http://localhost:4000/api/transcriptions/${id}`);
+            await axios.delete(`https://speech-to-text-backend-hejt.onrender.com/api/transcriptions/${id}`);
             fetchHistory(); // refresh the list after deletion
         } catch {
             alert("Delete failed");
@@ -39,7 +39,7 @@ export default function History() {
         try {
             // Loop through each transcript and delete individually
             for (const item of history) {
-                await axios.delete(`http://localhost:4000/api/transcriptions/${item._id}`);
+                await axios.delete(`https://speech-to-text-backend-hejt.onrender.com/${item._id}`);
             }
             setHistory([]); // clear state after deletion
             alert("All transcripts cleared!");
