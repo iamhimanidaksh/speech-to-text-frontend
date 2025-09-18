@@ -79,32 +79,39 @@ export default function Home() {
 
     // ================= Upload & Transcribe =================
     async function uploadAudio(fileOrBlob, filename = "audio.webm") {
-        setLoading(true);
-        try {
-            const form = new FormData();
+  setLoading(true);
+  try {
+    let blob = fileOrBlob;
 
-            // Convert Blob to File if needed
-            const file =
-                fileOrBlob instanceof Blob
-                    ? new File([fileOrBlob], filename, { type: fileOrBlob.type })
-                    : fileOrBlob;
+    // Convert to WAV if not already
+    if (!(blob.type.includes("wav"))) {
+      const audioCtx = new AudioContext();
+      const buffer = await blob.arrayBuffer();
+      const decoded = await audioCtx.decodeAudioData(buffer);
 
-            form.append("audio", file);
-
-            // Send to backend
-            const res = await axios.post("http://localhost:4000/api/transcribe", form, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-
-            setLatestTranscript(res.data.transcript || "Transcription failed.");
-        } catch (err) {
-            console.error("Upload error:", err);
-            alert("⚠️ No speech detected. Try again.");
-            setLatestTranscript("");
-        } finally {
-            setLoading(false);
-        }
+      const wavBuffer = audioBufferToWav(decoded); // helper function
+      blob = new Blob([wavBuffer], { type: "audio/wav" });
+      filename = "recording.wav";
     }
+
+    const file = new File([blob], filename, { type: blob.type });
+    const form = new FormData();
+    form.append("audio", file);
+
+    const res = await axios.post("http://localhost:4000/api/transcribe", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    setLatestTranscript(res.data.transcript || "Transcription failed.");
+  } catch (err) {
+    console.error("Upload error:", err);
+    alert("No speech detected. Try again.");
+    setLatestTranscript("");
+  } finally {
+    setLoading(false);
+  }
+}
+
 
     // ================= UI =================
     return (
