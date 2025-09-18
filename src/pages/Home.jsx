@@ -28,7 +28,10 @@ export default function Home() {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
             // Create MediaRecorder to capture audio
-            const mr = new MediaRecorder(stream);
+            const mimeType = MediaRecorder.isTypeSupported("audio/webm")
+                ? "audio/webm"
+                : "audio/mp4";
+            const mr = new MediaRecorder(stream, { mimeType });
 
             // Collect audio chunks as data becomes available
             mr.ondataavailable = (e) => {
